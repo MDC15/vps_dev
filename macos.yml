@@ -1,0 +1,25 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  macos:
+    image: dockurr/macos
+    container_name: macos
+    environment:
+      VERSION: "13"          # Chọn macOS 13 Ventura
+      CPU_CORES: "4"         # Số CPU cores cấp phát (mặc định 2 cores)
+      RAM_SIZE: "8G"         # Tổng RAM cấp phát (mặc định 4G)
+      DISK_SIZE: "128G"      # Kích thước đĩa ảo (mặc định 64G)
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8006:8006"          # Web viewer
+      - "5900:5900/tcp"      # VNC TCP
+      - "5900:5900/udp"      # VNC UDP
+    volumes:
+      - ./macos:/storage     # Lưu trữ dữ liệu persist
+    restart: always
+    stop_grace_period: 2m

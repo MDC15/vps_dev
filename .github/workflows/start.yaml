@@ -1,0 +1,27 @@
+# .github/workflows/start.yaml
+name: Start macOS Container
+
+# Chạy khi có push lên main hoặc khi bạn bấm “Run workflow” thủ công
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  start-macos:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout mã nguồn
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Cài Docker Compose plugin (nếu chưa có)
+      - name: Install Docker Compose Plugin
+        run: |
+          sudo apt update
+          sudo apt install -y docker.io docker-compose
+
+      # 4. Chạy Docker Compose
+      - name: Launch macOS container with Docker Compose
+        run: |
+          sudo docker compose -f macos.yml up -d
