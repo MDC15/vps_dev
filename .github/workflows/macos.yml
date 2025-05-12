@@ -1,0 +1,52 @@
+# .github/workflows/macos.yml
+name: Run macOS in Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  macos-docker:
+    runs-on: ubuntu-latest
+
+    services:
+      macos:
+        image: dockurr/macos
+        container_name: macos
+        # Các biến môi trường để chọn phiên bản macOS, kích thước đĩa,...
+        environment:
+          VERSION: "13"           # macOS 13 Ventura
+          DISK_SIZE: "128G"
+          CPU_CORES: "4"
+          RAM_SIZE: "8G"
+        # Kích hoạt KVM và TUN/TAP
+        options: >-
+          --device /dev/kvm
+          --device /dev/net/tun
+          --cap-add NET_ADMIN
+        ports:
+          - 8006:8006             # Web viewer
+          - 5900:5900/tcp         # VNC TCP
+          - 5900:5900/udp         # VNC UDP
+        volumes:
+          - ${{ github.workspace }}/macos:/storage   # Thư mục lưu trữ macOS
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Wait for macOS service to be ready
+        # Chờ service khởi động (tăng timeout nếu cần)
+        run: |
+          for i in {1..30}; do
+            nc -z localhost 8006 && break
+            echo "Waiting for macOS service..."
+            sleep 5
+          done
+
+      - name: Display macOS web console URL
+        run: echo "Access the macOS installer at http://localhost:8006"
+
+      # Thêm các bước tự động hóa cài đặt nếu muốn,
+      # ví dụ sử dụng curl / expect để tương tác installer.
