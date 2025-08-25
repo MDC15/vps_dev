@@ -17,7 +17,6 @@ services:
       - NET_ADMIN
     ports:
      ports:
-      - "8080:80"
       - "8006:8006"          # Web viewer
       - "5900:5900/tcp"      # VNC TCP
       - "5900:5900/udp"      # VNC UDP
