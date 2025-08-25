@@ -1,4 +1,3 @@
-# .github/workflows/start.yaml
 name: Start macOS Container
 
 on:
@@ -12,13 +11,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3                 # Lấy code về runner :contentReference[oaicite:15]{index=15}
+        uses: actions/checkout@v3
 
       - name: Set up Docker Engine
-        uses: docker/setup-docker-action@v4       # Cài Docker Engine/CLI :contentReference[oaicite:16]{index=16}
+        uses: docker/setup-docker-action@v4
 
       - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1      # Cài Compose V2 plugin :contentReference[oaicite:17]{index=17}
+        uses: docker/setup-compose-action@v1
 
       - name: Launch macOS container with Docker Compose
-        run: docker compose -f macos.yml up -d    # Dùng 'docker compose' thay vì 'docker-compose' :contentReference[oaicite:18]{index=18}
+        run: docker compose -f macos.yml up -d
+
+      - name: Show container status
+        run: docker ps
+
+      - name: Output service link
+        run: |
+          PORT=$(docker compose port <service_name> <container_port> | cut -d: -f2)
+          echo "🔗 Service is running at: http://localhost:$PORT"
